@@ -9,17 +9,17 @@ using Hsp.Moscow.Extensibility;
 namespace Hsp.Moscow.ProgramChange
 {
 
-  public class MidiToOscProgramChange : IMidiToOscPlugin
+  public class MidiToOscProgramChange : IMoscowPlugin
   {
 
     public string Name => "Program Changer";
 
-    private IMidiToOscHost Host { get; set; }
+    private IMoscowHost Host { get; set; }
 
     private List<TrackInfo> Tracks { get; set; }
 
 
-    public void HostStartup(IMidiToOscHost host)
+    public void HostStartup(IMoscowHost host)
     {
       Host = host;
 

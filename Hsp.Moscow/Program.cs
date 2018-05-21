@@ -17,7 +17,7 @@ using Sanford.Multimedia.Midi;
 namespace Hsp.Moscow
 {
 
-  class Program : ServiceBase, IMidiToOscHost
+  class Program : ServiceBase, IMoscowHost
   {
 
     private const string DefaultServiceName = "MidiToOsc";
@@ -31,7 +31,7 @@ namespace Hsp.Moscow
     private bool DebugMode { get; set; }
 
 
-    private List<IMidiToOscPlugin> Plugins { get; set; }
+    private List<IMoscowPlugin> Plugins { get; set; }
 
 
     static void Main(string[] args)
@@ -43,10 +43,14 @@ namespace Hsp.Moscow
         instance.DebugMode = args[0].Equals("debug", StringComparison.OrdinalIgnoreCase);
         if (args[0].Equals("install", StringComparison.OrdinalIgnoreCase))
         {
-          Environment.Exit(InstallService());
+          var serviceName = args.Length > 1 ? args[1] : DefaultServiceName;
+          Environment.Exit(InstallService(serviceName));
         }
         if (args[0].Equals("uninstall", StringComparison.OrdinalIgnoreCase))
-          Environment.Exit(UninstallService());
+        {
+          var serviceName = args.Length > 1 ? args[1] : DefaultServiceName;
+          Environment.Exit(UninstallService(serviceName));
+        }
       }
 
       if (instance.DebugMode)
@@ -76,15 +80,15 @@ namespace Hsp.Moscow
       return proc.ExitCode;
     }
 
-    private static int InstallService()
+    private static int InstallService(string serviceName)
     {
       var executable = typeof(Program).Assembly.Location;
-      return RunSc("create", DefaultServiceName, $"binPath= \"{executable}\"");
+      return RunSc("create", serviceName, $"binPath= \"{executable}\"");
     }
 
-    private static int UninstallService()
+    private static int UninstallService(string serviceName)
     {
-      return RunSc("delete", DefaultServiceName);
+      return RunSc("delete", serviceName);
     }
 
 
@@ -112,7 +116,7 @@ namespace Hsp.Moscow
 
     private void LoadPlugins()
     {
-      Plugins = new List<IMidiToOscPlugin>();
+      Plugins = new List<IMoscowPlugin>();
 
       var pluginFolder = Settings.Default.PluginFolder;
       if (String.IsNullOrEmpty(pluginFolder))
@@ -127,7 +131,7 @@ namespace Hsp.Moscow
         try
         {
           var asm = Assembly.LoadFile(file);
-          types = asm.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IMidiToOscPlugin))).ToArray();
+          types = asm.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IMoscowPlugin))).ToArray();
         }
         catch
         {
@@ -138,7 +142,7 @@ namespace Hsp.Moscow
         {
           try
           {
-            var plugin = (IMidiToOscPlugin) Activator.CreateInstance(type);
+            var plugin = (IMoscowPlugin) Activator.CreateInstance(type);
             plugin.HostStartup(this);
             Plugins.Add(plugin);
             WriteDebug($"Loaded plugin '{plugin.Name}' from '{file}'");
