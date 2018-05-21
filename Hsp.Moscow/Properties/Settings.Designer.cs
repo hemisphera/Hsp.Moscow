@@ -25,7 +25,7 @@ namespace Hsp.Moscow.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("loopMIDI Port")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string InputMidiDevice {
             get {
                 return ((string)(this["InputMidiDevice"]));
@@ -61,7 +61,7 @@ namespace Hsp.Moscow.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("F:\\Hemisphera\\dotNet\\Moscow\\Hsp.Moscow.Plugins\\bin\\Debug")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string PluginFolder {
             get {
                 return ((string)(this["PluginFolder"]));

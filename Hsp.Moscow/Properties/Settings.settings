@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="InputMidiDevice" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">loopMIDI Port</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="OscHost" Type="System.String" Scope="Application">
       <Value Profile="(Default)">127.0.0.1</Value>
@@ -15,7 +15,7 @@
       <Value Profile="(Default)">9000</Value>
     </Setting>
     <Setting Name="PluginFolder" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">F:\Hemisphera\dotNet\Moscow\Hsp.Moscow.Plugins\bin\Debug</Value>
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>
