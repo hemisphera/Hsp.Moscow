@@ -6,13 +6,13 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Hsp.Moscow.Extensibility;
 
-namespace Hsp.Moscow.TrackMuter
+namespace Hsp.Moscow.DefaultPlugins
 {
 
   public class MoscowTrackMuterPlugin : IMoscowPlugin
   {
 
-    public string Name => "TrackMuter";
+    public string Name => "Hsp.TrackMuter";
 
     private IMoscowHost Host { get; set; }
 

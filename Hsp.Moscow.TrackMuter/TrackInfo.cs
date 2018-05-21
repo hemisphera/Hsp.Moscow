@@ -1,4 +1,4 @@
-﻿namespace Hsp.Moscow.TrackMuter
+﻿namespace Hsp.Moscow.DefaultPlugins
 {
   internal class TrackInfo
   {

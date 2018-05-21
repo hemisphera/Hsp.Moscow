@@ -7,8 +7,8 @@
     <ProjectGuid>{0EEA5050-BF21-4738-A00E-6AECD12C320B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MidiToOsc.ProgramChange</RootNamespace>
-    <AssemblyName>MidiToOsc.ProgramChange</AssemblyName>
+    <RootNamespace>Hsp.Moscow.DefaultPlugins</RootNamespace>
+    <AssemblyName>Hsp.Moscow.DefaultPlugins</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
