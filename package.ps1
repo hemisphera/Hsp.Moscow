@@ -1,3 +1,7 @@
+if (Test-Path "$PSScriptRoot\Release") {
+    Remove-Item "$PSScriptRoot\Release" -Recurse -Force
+}
+
 New-Item -ItemType Directory "$PSScriptRoot\Release" -Force | Out-Null
 New-Item -ItemType Directory "$PSScriptRoot\Release\Plugins" -Force | Out-Null
 
