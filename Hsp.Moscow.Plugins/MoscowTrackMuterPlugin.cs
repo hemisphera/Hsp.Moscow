@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Hsp.Moscow.Extensibility;
 
-namespace Hsp.Moscow.DefaultPlugins
+namespace Hsp.Moscow.Plugins
 {
 
   public class MoscowTrackMuterPlugin : IMoscowPlugin
@@ -17,6 +17,12 @@ namespace Hsp.Moscow.DefaultPlugins
     private IMoscowHost Host { get; set; }
 
     private List<TrackInfo> Tracks { get; set; }
+
+
+    public MoscowTrackMuterPlugin()
+    {
+      Tracks = new List<TrackInfo>();
+    }
 
 
     public void HostStartup(IMoscowHost host)
@@ -33,9 +39,9 @@ namespace Hsp.Moscow.DefaultPlugins
 
     private void HostOnMidiMessageReceived(object sender, MidiEventArgs e)
     {
-      if (e.Command != 12) // program change
+      if (e.Status != 12) // program change
         return;
-      
+
       // Find all tracks that have the string 'ChXX-PCYYY' in it's name.
       // where XX is for the midi channel and YYY for the program change
       // Whenever a MIDI program change is received, all tracks on that channel are muted, except the one where YYY matches the program change received
@@ -51,10 +57,11 @@ namespace Hsp.Moscow.DefaultPlugins
             PC = programChange
           };
         })
-        .Where(i => i.Channel == e.Channel + 1);
+        .Where(i => i.Channel == e.Channel + 1)
+        .ToArray();
       
       foreach (var trk in tracks)
-        MuteTrack(trk.Track, trk.PC != e.Data1 + 1);
+        MuteTrack(trk.Track, trk.PC != e.Data1);
     }
 
     private void MuteTrack(TrackInfo track, bool isMute)

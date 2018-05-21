@@ -15,7 +15,7 @@
       <Value Profile="(Default)">9000</Value>
     </Setting>
     <Setting Name="PluginFolder" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">F:\Hemisphera\dotNet\Moscow\Hsp.Moscow.Plugins\bin\Debug</Value>
     </Setting>
   </Settings>
 </SettingsFile>

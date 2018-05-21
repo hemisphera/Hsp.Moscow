@@ -61,7 +61,7 @@ namespace Hsp.Moscow.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("F:\\Hemisphera\\dotNet\\Moscow\\Hsp.Moscow.Plugins\\bin\\Debug")]
         public string PluginFolder {
             get {
                 return ((string)(this["PluginFolder"]));

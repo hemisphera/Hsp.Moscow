@@ -161,7 +161,9 @@ namespace Hsp.Moscow
       if (!(message is ChannelMessage cm))
         return;
 
-      var ar = new MidiEventArgs(cm.MidiChannel, (int) cm.Command, cm.Data1, cm.Data2);
+      var status = ((int)cm.Command) >> 4;
+
+      var ar = new MidiEventArgs(cm.MidiChannel, status, cm.Data1, cm.Data2);
       WriteDebug($"Got MIDI : {ar}");
       MidiMessageReceived?.Invoke(this, ar);
     }
@@ -193,7 +195,7 @@ namespace Hsp.Moscow
             foreach (var message in messages)
               try
               {
-                var msg = new OscEventArgs(message.Address, message);
+                var msg = new OscEventArgs(message.Address, message.ToArray());
                 WriteDebug($"Got OSC: {msg}");
                 OscMessageReceived?.Invoke(this, msg);
               }

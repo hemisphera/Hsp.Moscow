@@ -1,4 +1,4 @@
-﻿namespace Hsp.Moscow.DefaultPlugins
+﻿namespace Hsp.Moscow.Plugins
 {
   internal class TrackInfo
   {

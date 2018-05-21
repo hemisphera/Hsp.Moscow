@@ -7,8 +7,8 @@
     <ProjectGuid>{0EEA5050-BF21-4738-A00E-6AECD12C320B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hsp.Moscow.DefaultPlugins</RootNamespace>
-    <AssemblyName>Hsp.Moscow.DefaultPlugins</AssemblyName>
+    <RootNamespace>Hsp.Moscow.Plugins</RootNamespace>
+    <AssemblyName>Hsp.Moscow.Plugins</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

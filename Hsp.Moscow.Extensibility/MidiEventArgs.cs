@@ -8,14 +8,14 @@
   {
 
     /// <summary>
-    /// The MIDI channel
+    /// The MIDI channel. This is 0 based. Channel 1 is 0.
     /// </summary>
     public int Channel { get; }
     
     /// <summary>
     /// The MIDI command. NoteOn, NoteOff, CC, ProgramChange ecc.
     /// </summary>
-    public int Command { get; }
+    public int Status { get; }
     
     /// <summary>
     /// Data1 of the message
@@ -28,10 +28,10 @@
     public int Data2 { get; }
 
 
-    public MidiEventArgs(int channel, int command, int data1, int data2)
+    public MidiEventArgs(int channel, int status, int data1, int data2)
     {
       Channel = channel;
-      Command = command;
+      Status = status;
       Data1 = data1;
       Data2 = data2;
     }
@@ -39,7 +39,7 @@
 
     public override string ToString()
     {
-      return $"Ch{Channel:D2} - {Command:D2} - {Data1:D3}, {Data2:D3}";
+      return $"Ch{Channel:D2} - {Status:D2} - {Data1:D3}, {Data2:D3}";
     }
 
   }
