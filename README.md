@@ -50,3 +50,6 @@ Moscow, on startup, then loads all .dll files inside the plugins folder and scan
 
 **Note**: In order for Moscow to be able to create an instance of your plugin, the class must provide at least one paramter-less constructor.
 
+## Debugging
+
+You can also Moscow in "debug-mode". To do so, just start it as a normal executable from `cmd.exe` using `hsp.moscow.exe debug`. It will then NOT run as a service but will dump MIDI and OSC messages to stdout.
