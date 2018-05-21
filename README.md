@@ -1,5 +1,7 @@
 # Hsp.Moscow
 
+**M**IDI to **OSC** **O**verpass for **W**indows
+
 Hsp.Moscow is an extensible MIDI vs. OSC bridge (and vice versa). It is very similar to other projects, like OSCII-bot from Cockos (https://www.cockos.com/oscii-bot) but differs in the following points:
 
 1. It only runs on Windows. While the codebase *should* be cross-platform compatible and be able to run on Mono, it is still primarily designed as a Windows service.
