@@ -56,6 +56,7 @@ namespace Hsp.Moscow
       if (instance.DebugMode)
       {
         instance.OnStart(args);
+        Console.WriteLine("Moscow is running. Press <ENTER> to exit.");
         Console.ReadLine();
         instance.Stop();
       }
@@ -120,7 +121,7 @@ namespace Hsp.Moscow
 
       var pluginFolder = Settings.Default.PluginFolder;
       if (String.IsNullOrEmpty(pluginFolder))
-        Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), "Plugins");
+        pluginFolder = Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), "Plugins");
 
       if (!Directory.Exists(pluginFolder))
         return;

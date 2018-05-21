@@ -6,13 +6,13 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Hsp.Moscow.Extensibility;
 
-namespace Hsp.Moscow.ProgramChange
+namespace Hsp.Moscow.TrackMuter
 {
 
-  public class MidiToOscProgramChange : IMoscowPlugin
+  public class MoscowTrackMuterPlugin : IMoscowPlugin
   {
 
-    public string Name => "Program Changer";
+    public string Name => "TrackMuter";
 
     private IMoscowHost Host { get; set; }
 

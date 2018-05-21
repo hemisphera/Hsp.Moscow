@@ -1,9 +1,9 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MidiToOsc.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Hsp.Moscow.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="InputMidiDevice" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">loopMIDI port</Value>
+      <Value Profile="(Default)">loopMIDI Port</Value>
     </Setting>
     <Setting Name="OscHost" Type="System.String" Scope="Application">
       <Value Profile="(Default)">127.0.0.1</Value>
@@ -15,7 +15,7 @@
       <Value Profile="(Default)">9000</Value>
     </Setting>
     <Setting Name="PluginFolder" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">D:\dotNET\MidiToOsc\MidiToOsc.ProgramChange\bin\Debug</Value>
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

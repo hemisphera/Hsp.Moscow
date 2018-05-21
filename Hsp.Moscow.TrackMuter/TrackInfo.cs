@@ -1,4 +1,4 @@
-﻿namespace Hsp.Moscow.ProgramChange
+﻿namespace Hsp.Moscow.TrackMuter
 {
   internal class TrackInfo
   {
