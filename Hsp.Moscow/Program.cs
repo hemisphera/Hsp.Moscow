@@ -20,7 +20,7 @@ namespace Hsp.Moscow
   class Program : ServiceBase, IMoscowHost
   {
 
-    private const string DefaultServiceName = "MidiToOsc";
+    private const string DefaultServiceName = "Moscow MIDI OSC";
 
     private InputDevice MidiIn { get; set; }
 
