@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Hsp.Moscow.Extensibility;
 
 namespace Hsp.Moscow.Plugins
@@ -42,55 +40,61 @@ namespace Hsp.Moscow.Plugins
       if (e.Status != 12) // program change
         return;
 
-      // Find all tracks that have the string 'ChXX-PCYYY' in it's name.
-      // where XX is for the midi channel and YYY for the program change
-      // Whenever a MIDI program change is received, all tracks on that channel are muted, except the one where YYY matches the program change received
-      var tracks = Tracks.Select(t =>
-        {
-          var m = Regex.Match(t.Name, "Ch(?<mc>[0-9]{2})-PC(?<mpc>[0-9]{3})");
-          var channel = m.Success ? int.Parse(m.Groups["mc"].Value) : -1;
-          var programChange = m.Success ? int.Parse(m.Groups["mpc"].Value) : -1;
-          return new
-          {
-            Track = t,
-            Channel = channel,
-            PC = programChange
-          };
-        })
-        .Where(i => i.Channel == e.Channel + 1)
-        .ToArray();
-      
+      var tracks = GetTracks(e.Channel);
       foreach (var trk in tracks)
-        MuteTrack(trk.Track, trk.PC != e.Data1);
+        MuteTrack(trk, trk.Program != e.Data1);
     }
 
     private void MuteTrack(TrackInfo track, bool isMute)
     {
+      if (track.IsMuted == isMute)
+        return;
+
       // Mute / Unmute track in REAPER
       Host.SendOscMessage(new OscEventArgs($"/track/{track.Id}/mute", isMute ? 1 : 0));
+    }
+
+    private bool FindTrack(string trackNoStr, out TrackInfo track)
+    {
+      track = null;
+
+      if (!int.TryParse(trackNoStr, out var trackNo))
+        return false;
+
+      track = Tracks.FirstOrDefault(t => t.Id == trackNo);
+      if (track == null)
+      {
+        track = new TrackInfo
+        {
+          Id = trackNo
+        };
+        Tracks.Add(track);
+      }
+
+      return true;
     }
 
     private void HostOnOscMessageReceived(object sender, OscEventArgs e)
     {
       // reacts to track messages, extracting track number and name and adds it to 'Tracks' list
-      var m = Regex.Match(e.Address, "/track(/(?<trackNo>[0-9]+))?/name");
-      if (!m.Success)
-        return;
-
-      var trackNoStr = m.Groups["trackNo"].Value;
-      var trackNo = String.IsNullOrEmpty(trackNoStr) ? 0 : int.Parse(trackNoStr);
-      if (trackNo == 0)
-        return;
-      var trackName = (string) e.Args[0];
-
-      var track = Tracks.FirstOrDefault(t => t.Id == trackNo);
-      if (track == null)
+      var m = Regex.Match(e.Address, "/track(/(?<trackNo>[0-9]+))?/(?<param>[a-z]+)");
+      if (m.Success)
       {
-        track = new TrackInfo();
-        Tracks.Add(track);
+        var trackNoStr = m.Groups["trackNo"].Value;
+        if (!FindTrack(trackNoStr, out var track))
+          return;
+        
+        if (m.Groups["param"].Value.Equals("name", StringComparison.OrdinalIgnoreCase))
+          track.Name = (string) e.Args[0];
+        if (m.Groups["param"].Value.Equals("mute", StringComparison.OrdinalIgnoreCase))
+          if (int.TryParse($"{e.Args[0]}", out var isMutedVal))
+            track.IsMuted = isMutedVal == 1;
       }
-      track.Id = trackNo;
-      track.Name = trackName;
+    }
+
+    private TrackInfo[] GetTracks(int channel)
+    {
+      return Tracks.Where(t => t.Channel == channel).ToArray();
     }
 
     public void HostShutdown()
@@ -100,4 +104,5 @@ namespace Hsp.Moscow.Plugins
     }
 
   }
+
 }
