@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
     <Compile Include="GenericMidiMessage.cs" />
     <Compile Include="MidiDevice.cs" />
     <Compile Include="PeriodicTask.cs" />

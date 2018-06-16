@@ -30,6 +30,7 @@ Moscow is configured entirely by modifying it's configuration file `Hsp.Moscow.e
 - `OscPortOut`: specifies the UDP port to send OSC messages to
 - `OscPortIn`: specifies the UDP port to listen for incoming OSC messages
 - `PluginFolder`: specifies the folder where to look for plugins. This is optional. It defaults to `<installLocation>\PlugIns`
+- `ResetMidiOnPlay`: specifies whether to reset the MIDI input device when receiving a playback-start-message from the OSC device. Helps to reconnect lost MIDI devices.
 
 ## How does it work?
 

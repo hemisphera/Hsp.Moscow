@@ -67,5 +67,14 @@ namespace Hsp.Moscow.Properties {
                 return ((string)(this["PluginFolder"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ResetMidiOnPlay {
+            get {
+                return ((bool)(this["ResetMidiOnPlay"]));
+            }
+        }
     }
 }

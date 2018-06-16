@@ -81,7 +81,7 @@ namespace Hsp.Moscow
     
     private void In_ChannelMessageReceived(object sender, ChannelMessageEventArgs e)
     {
-      var msg = new GenericMidiMessage()
+      var msg = new GenericMidiMessage
       {
         Channel = e.Message.MidiChannel,
         Status = e.Message.Status,

@@ -104,6 +104,7 @@ namespace Hsp.Moscow
 
     private void CreateMidiIn()
     {
+      CloseMidiIn();
       var name = Settings.Default.InputMidiDevice;
       MidiDevice.Refresh();
       var midiDevice = MidiDevice.ByName(MidiDeviceType.Input, name);
@@ -200,13 +201,33 @@ namespace Hsp.Moscow
 
     private void HandleOscIn()
     {
-      var packet = OscIn.Receive();
+      OscPacket packet = null;
+      try
+      {
+        packet = OscIn.Receive();
+      }
+      catch
+      {
+        // Ignore exceptions.
+        // Most probably an exception indicating the underlying socket was closed during service shutdown.
+      }
+
+      if (packet == null)
+        return;
+
       var messages = ExplodeBundle(packet);
       foreach (var message in messages)
         try
         {
+          if (Settings.Default.ResetMidiOnPlay)
+            message.On("/play", (Single) 1, m =>
+            {
+              WriteDebug("Received 'play' message. Resetting MIDI device ...");
+              CreateMidiIn();
+            });
+
           var msg = new OscEventArgs(message.Address, message.ToArray());
-          WriteDebug($"Got OSC: {msg}");
+          //WriteDebug($"Got OSC: {msg}");
           OscMessageReceived?.Invoke(this, msg);
         }
         catch
