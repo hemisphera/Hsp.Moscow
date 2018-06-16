@@ -17,6 +17,8 @@ namespace Hsp.Moscow
 
     public TimeSpan Interval { get;set; }
 
+    public Action AbortHandler { get; set; }
+
 
     public PeriodicTask(Action action)
       : this(action, TimeSpan.FromMilliseconds(250))
@@ -49,6 +51,7 @@ namespace Hsp.Moscow
 
     public void Abort()
     {
+      AbortHandler?.Invoke();
       Token.Cancel();
       Task.Wait();
     }

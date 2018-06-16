@@ -246,7 +246,13 @@ namespace Hsp.Moscow
 
       OscIn = new OscReceiver(IPAddress.Parse(Settings.Default.OscHost), Settings.Default.OscPortIn);
       OscIn.Connect();
-      OscInputTask = new PeriodicTask(HandleOscIn, TimeSpan.Zero);
+      OscInputTask = new PeriodicTask(HandleOscIn, TimeSpan.Zero)
+      {
+        AbortHandler = delegate
+        {
+          OscIn.Dispose();
+        }
+      };
 
       LoadPlugins();
     }
@@ -262,7 +268,15 @@ namespace Hsp.Moscow
       OscOut?.Close();
       OscOut?.Dispose();
 
-      OscInputTask.Abort();
+      try
+      {
+        OscInputTask.Abort();
+      }
+      catch
+      {
+        // ignore
+      }
+
       OscIn?.Close();
       OscIn?.Dispose();
     }
