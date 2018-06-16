@@ -48,6 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GenericMidiMessage.cs" />
+    <Compile Include="MidiDevice.cs" />
+    <Compile Include="PeriodicTask.cs" />
     <Compile Include="Program.cs">
       <SubType>Component</SubType>
     </Compile>

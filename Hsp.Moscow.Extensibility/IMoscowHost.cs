@@ -12,7 +12,7 @@ namespace Hsp.Moscow.Extensibility
     /// <summary>
     /// Gets called whenever Moscow receives a MIDI message on its configured MIDI input device
     /// </summary>
-    event EventHandler<MidiEventArgs> MidiMessageReceived;
+    event MidiMessageReceivedHandler MidiMessageReceived;
 
     /// <summary>
     /// Gets called whenever Moscow receives a OSC message on its configured OSC input port

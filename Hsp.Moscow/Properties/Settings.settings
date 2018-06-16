@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="InputMidiDevice" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">loopMIDI Port</Value>
     </Setting>
     <Setting Name="OscHost" Type="System.String" Scope="Application">
       <Value Profile="(Default)">127.0.0.1</Value>

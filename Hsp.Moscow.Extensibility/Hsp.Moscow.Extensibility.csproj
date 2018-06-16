@@ -40,9 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeviceType.cs" />
+    <Compile Include="IMidiDevice.cs" />
+    <Compile Include="IMidiMessage.cs" />
     <Compile Include="IMoscowHost.cs" />
     <Compile Include="IMoscowPlugin.cs" />
-    <Compile Include="MidiEventArgs.cs" />
+    <Compile Include="MidiMessageReceivedHandler.cs" />
     <Compile Include="OscEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

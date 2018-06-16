@@ -35,14 +35,14 @@ namespace Hsp.Moscow.Plugins
       Host.SendOscMessage(new OscEventArgs("/action/41743"));
     }
 
-    private void HostOnMidiMessageReceived(object sender, MidiEventArgs e)
+    private void HostOnMidiMessageReceived(IMidiDevice device, IMidiMessage message)
     {
-      if (e.Status != 12) // program change
+      if (message.Status != 12) // program change
         return;
 
-      var tracks = GetTracks(e.Channel);
+      var tracks = GetTracks(message.Channel);
       foreach (var trk in tracks)
-        MuteTrack(trk, trk.Program != e.Data1);
+        MuteTrack(trk, trk.Program != message.Data1);
     }
 
     private void MuteTrack(TrackInfo track, bool isMute)

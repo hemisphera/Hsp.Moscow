@@ -25,7 +25,7 @@ namespace Hsp.Moscow.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("loopMIDI Port")]
         public string InputMidiDevice {
             get {
                 return ((string)(this["InputMidiDevice"]));

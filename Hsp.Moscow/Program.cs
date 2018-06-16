@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Hsp.Moscow.Extensibility;
 using Hsp.Moscow.Properties;
 using Rug.Osc;
-using Sanford.Multimedia.Midi;
 
 namespace Hsp.Moscow
 {
@@ -20,9 +19,13 @@ namespace Hsp.Moscow
   class Program : ServiceBase, IMoscowHost
   {
 
-    private const string DefaultServiceName = "Moscow MIDI OSC";
+    private const string DefaultServiceName = "Moscow";
 
-    private InputDevice MidiIn { get; set; }
+    private PeriodicTask MidiKeepAliveTask { get; set; }
+
+    private MidiDevice MidiIn { get; set; }
+
+    private PeriodicTask OscInputTask { get; set; }
 
     private OscSender OscOut { get; set; }
     
@@ -64,6 +67,7 @@ namespace Hsp.Moscow
         Run(instance);
     }
 
+
     private static int RunSc(params string[] args)
     {
       var proc = new Process
@@ -93,26 +97,24 @@ namespace Hsp.Moscow
     }
 
 
-    public event EventHandler<MidiEventArgs> MidiMessageReceived;
+    public event MidiMessageReceivedHandler MidiMessageReceived;
     
     public event EventHandler<OscEventArgs> OscMessageReceived;
 
 
-    private InputDevice CreateMidiIn(string name)
+    private void CreateMidiIn()
     {
-      for (int i = 0; i < InputDevice.DeviceCount; i++)
+      var name = Settings.Default.InputMidiDevice;
+      MidiDevice.Refresh();
+      var midiDevice = MidiDevice.ByName(MidiDeviceType.Input, name);
+      if (midiDevice != null)
       {
-        var caps = InputDevice.GetDeviceCapabilities(i);
-        if (caps.name.Equals(name, StringComparison.OrdinalIgnoreCase))
-        {
-          var device = new InputDevice(i);
-          device.MessageReceived += DeviceOnMessageReceived;
-          device.StartRecording();
-          return device;
-        }
+        midiDevice.MessageReceived += DeviceOnMessageReceived;
+        //device.StartRecording();
+        midiDevice.Open();
+        MidiIn = midiDevice;
+        WriteDebug($"MIDI device '{name}' successfully opened");
       }
-
-      return null;
     }
 
     private void LoadPlugins()
@@ -156,16 +158,10 @@ namespace Hsp.Moscow
       }
     }
 
-    private void DeviceOnMessageReceived(IMidiMessage message)
+    private void DeviceOnMessageReceived(IMidiDevice device, IMidiMessage message)
     {
-      if (!(message is ChannelMessage cm))
-        return;
-
-      var status = ((int)cm.Command) >> 4;
-
-      var ar = new MidiEventArgs(cm.MidiChannel, status, cm.Data1, cm.Data2);
-      WriteDebug($"Got MIDI : {ar}");
-      MidiMessageReceived?.Invoke(this, ar);
+      WriteDebug($"Got MIDI : {message}");
+      MidiMessageReceived?.Invoke(device, message);
     }
 
     private void WriteDebug(string msg)
@@ -173,44 +169,6 @@ namespace Hsp.Moscow
       if (!DebugMode)
         return;
       Console.WriteLine(msg);
-    }
-
-    protected override void OnStart(string[] args)
-    {
-      MidiIn = CreateMidiIn(Settings.Default.InputMidiDevice);
-
-      OscOut = new OscSender(IPAddress.Parse(Settings.Default.OscHost), 0, Settings.Default.OscPortOut);
-      OscOut.Connect();
-
-      OscIn = new OscReceiver(IPAddress.Parse(Settings.Default.OscHost), Settings.Default.OscPortIn);
-      Task.Run(() =>
-      {
-        OscIn.Connect();
-        var running = true;
-        while (running)
-          try
-          {
-            var packet = OscIn.Receive();
-            var messages = ExplodeBundle(packet);
-            foreach (var message in messages)
-              try
-              {
-                var msg = new OscEventArgs(message.Address, message.ToArray());
-                WriteDebug($"Got OSC: {msg}");
-                OscMessageReceived?.Invoke(this, msg);
-              }
-              catch
-              {
-                // ignore
-              }
-          }
-          catch
-          {
-            running = false;
-          }
-      });
-
-      LoadPlugins();
     }
 
     private static OscMessage[] ExplodeBundle(OscPacket packet)
@@ -224,21 +182,71 @@ namespace Hsp.Moscow
       return new OscMessage[] { };
     }
 
+    private void CloseMidiIn()
+    {
+      MidiIn?.Close();
+      MidiIn = null;
+    }
+
+    private void MidiInputKeepAlive()
+    {
+      if (MidiIn == null)
+      {
+        var midiDeviceName = Settings.Default.InputMidiDevice;
+        WriteDebug($"MIDI device '{midiDeviceName}' appears offline. Reconnecting ...");
+        CreateMidiIn();
+      }
+    }
+
+    private void HandleOscIn()
+    {
+      var packet = OscIn.Receive();
+      var messages = ExplodeBundle(packet);
+      foreach (var message in messages)
+        try
+        {
+          var msg = new OscEventArgs(message.Address, message.ToArray());
+          WriteDebug($"Got OSC: {msg}");
+          OscMessageReceived?.Invoke(this, msg);
+        }
+        catch
+        {
+          // ignore
+        }
+    }
+
+
+    protected override void OnStart(string[] args)
+    {
+      MidiKeepAliveTask = new PeriodicTask(MidiInputKeepAlive, TimeSpan.FromSeconds(2.5));
+
+      OscOut = new OscSender(IPAddress.Parse(Settings.Default.OscHost), 0, Settings.Default.OscPortOut);
+      OscOut.Connect();
+
+      OscIn = new OscReceiver(IPAddress.Parse(Settings.Default.OscHost), Settings.Default.OscPortIn);
+      OscIn.Connect();
+      OscInputTask = new PeriodicTask(HandleOscIn, TimeSpan.Zero);
+
+      LoadPlugins();
+    }
+
     protected override void OnStop()
     {
       foreach (var plugin in Plugins)
         plugin.HostShutdown();
 
-      MidiIn?.Close();
-      MidiIn?.Dispose();
+      MidiKeepAliveTask.Abort();
+      CloseMidiIn();
 
       OscOut?.Close();
       OscOut?.Dispose();
 
+      OscInputTask.Abort();
       OscIn?.Close();
       OscIn?.Dispose();
     }
 
+    
     public void SendOscMessage(OscEventArgs msg)
     {
       WriteDebug($"Sending OSC: {msg}");
