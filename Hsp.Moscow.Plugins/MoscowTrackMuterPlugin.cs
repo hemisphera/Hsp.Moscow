@@ -35,7 +35,7 @@ namespace Hsp.Moscow.Plugins
       Host.SendOscMessage(new OscEventArgs("/action/41743"));
     }
 
-    private void HostOnMidiMessageReceived(IMidiDevice device, IMidiMessage message)
+    private void HostOnMidiMessageReceived(string device, IMidiMessage message)
     {
       if (message.Status != 12) // program change
         return;

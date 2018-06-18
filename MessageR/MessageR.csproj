@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Msgr</AssemblyName>
+    <RootNamespace>Msgr</RootNamespace>
+    <Description>Clinet / server for a simple generic messaging protocol</Description>
+  </PropertyGroup>
+
+</Project>

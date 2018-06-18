@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -8,9 +9,11 @@ using System.Net;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Hsp.Moscow.Extensibility;
 using Hsp.Moscow.Properties;
+using Msgr;
 using Rug.Osc;
 
 namespace Hsp.Moscow
@@ -18,23 +21,6 @@ namespace Hsp.Moscow
 
   class Program : ServiceBase, IMoscowHost
   {
-
-    private const string DefaultServiceName = "Moscow";
-
-    private PeriodicTask MidiKeepAliveTask { get; set; }
-
-    private MidiDevice MidiIn { get; set; }
-
-    private PeriodicTask OscInputTask { get; set; }
-
-    private OscSender OscOut { get; set; }
-    
-    private OscReceiver OscIn { get; set; }
-
-    private bool DebugMode { get; set; }
-
-
-    private List<IMoscowPlugin> Plugins { get; set; }
 
 
     static void Main(string[] args)
@@ -65,6 +51,32 @@ namespace Hsp.Moscow
       }
       else
         Run(instance);
+    }
+
+
+    private const string DefaultServiceName = "Moscow";
+
+    private PeriodicTask OscInputTask { get; set; }
+
+    private OscSender OscOut { get; set; }
+    
+    private OscReceiver OscIn { get; set; }
+
+    private bool DebugMode { get; set; }
+
+    private MsgrServer Server { get; }
+
+    private MsgrClient Client { get; set; }
+
+
+    private List<IMoscowPlugin> Plugins { get; set; }
+
+
+    private Program()
+    {
+      Server = new MsgrServer();
+      Server.ClientConnected += (s, e) => { Console.WriteLine($"Client '{e.Name}' connected to message server."); };
+      Server.ClientDisconnected += (s, e) => { Console.WriteLine($"Client '{e.Name}' disconnected."); };
     }
 
 
@@ -106,16 +118,32 @@ namespace Hsp.Moscow
     {
       CloseMidiIn();
       var name = Settings.Default.InputMidiDevice;
-      MidiDevice.Refresh();
-      var midiDevice = MidiDevice.ByName(MidiDeviceType.Input, name);
-      if (midiDevice != null)
+
+      Client = new MsgrClient("Moscow");
+      Client.Connect();
+
+      Process.Start(@"D:\dotNET\Hsp.Moscow\Hsp.Moscow.MidiHandler\bin\Debug\Hsp.Moscow.MidiHandler.exe");
+      Client.On("Ready", msg =>
       {
-        midiDevice.MessageReceived += DeviceOnMessageReceived;
-        //device.StartRecording();
-        midiDevice.Open();
-        MidiIn = midiDevice;
-        WriteDebug($"MIDI device '{name}' successfully opened");
-      }
+        var buffer = Encoding.UTF8.GetBytes(name);
+        Client.Send(msg.Sender, "MidiOpen", buffer);
+      });
+
+      Client.On("MidiIn", msg =>
+      {
+        using (var ms = new MemoryStream(msg.Data))
+        using (var br = new BinaryReader(ms))
+        {
+          var gmm = new GenericMidiMessage
+          {
+            Channel = br.ReadInt32(),
+            Status = br.ReadInt32(),
+            Data1 = br.ReadInt32(),
+            Data2 = br.ReadInt32()
+          };
+          DeviceOnMessageReceived(msg.Sender, gmm);
+        }
+      });
     }
 
     private void LoadPlugins()
@@ -159,10 +187,10 @@ namespace Hsp.Moscow
       }
     }
 
-    private void DeviceOnMessageReceived(IMidiDevice device, IMidiMessage message)
+    private void DeviceOnMessageReceived(string source, IMidiMessage message)
     {
       WriteDebug($"Got MIDI : {message}");
-      MidiMessageReceived?.Invoke(device, message);
+      MidiMessageReceived?.Invoke(source, message);
     }
 
     private void WriteDebug(string msg)
@@ -185,18 +213,10 @@ namespace Hsp.Moscow
 
     private void CloseMidiIn()
     {
-      MidiIn?.Close();
-      MidiIn = null;
-    }
-
-    private void MidiInputKeepAlive()
-    {
-      if (MidiIn == null)
-      {
-        var midiDeviceName = Settings.Default.InputMidiDevice;
-        WriteDebug($"MIDI device '{midiDeviceName}' appears offline. Reconnecting ...");
-        CreateMidiIn();
-      }
+      if (Client == null) return;
+      Client.Send("", "Shutdown");
+      Client.Disconnect();
+      Client = null;
     }
 
     private void HandleOscIn()
@@ -227,7 +247,6 @@ namespace Hsp.Moscow
             });
 
           var msg = new OscEventArgs(message.Address, message.ToArray());
-          //WriteDebug($"Got OSC: {msg}");
           OscMessageReceived?.Invoke(this, msg);
         }
         catch
@@ -239,7 +258,9 @@ namespace Hsp.Moscow
 
     protected override void OnStart(string[] args)
     {
-      MidiKeepAliveTask = new PeriodicTask(MidiInputKeepAlive, TimeSpan.FromSeconds(2.5));
+      Server.Start();
+      Thread.Sleep(250);
+      CreateMidiIn();
 
       OscOut = new OscSender(IPAddress.Parse(Settings.Default.OscHost), 0, Settings.Default.OscPortOut);
       OscOut.Connect();
@@ -262,7 +283,6 @@ namespace Hsp.Moscow
       foreach (var plugin in Plugins)
         plugin.HostShutdown();
 
-      MidiKeepAliveTask.Abort();
       CloseMidiIn();
 
       OscOut?.Close();

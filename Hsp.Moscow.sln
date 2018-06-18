@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hsp.Moscow.Extensibility", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hsp.Moscow.Plugins", "Hsp.Moscow.Plugins\Hsp.Moscow.Plugins.csproj", "{0EEA5050-BF21-4738-A00E-6AECD12C320B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hsp.Moscow.MidiHandler", "Hsp.Moscow.MidiHandler\Hsp.Moscow.MidiHandler.csproj", "{EFCDEFB1-BBFD-45F6-B991-BFA41C25AEE4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageR", "MessageR\MessageR.csproj", "{A2D19973-37CA-4AEF-A421-8142C2BA8431}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{0EEA5050-BF21-4738-A00E-6AECD12C320B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EEA5050-BF21-4738-A00E-6AECD12C320B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0EEA5050-BF21-4738-A00E-6AECD12C320B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFCDEFB1-BBFD-45F6-B991-BFA41C25AEE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFCDEFB1-BBFD-45F6-B991-BFA41C25AEE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFCDEFB1-BBFD-45F6-B991-BFA41C25AEE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFCDEFB1-BBFD-45F6-B991-BFA41C25AEE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2D19973-37CA-4AEF-A421-8142C2BA8431}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2D19973-37CA-4AEF-A421-8142C2BA8431}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2D19973-37CA-4AEF-A421-8142C2BA8431}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2D19973-37CA-4AEF-A421-8142C2BA8431}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
