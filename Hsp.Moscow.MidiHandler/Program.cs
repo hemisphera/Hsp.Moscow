@@ -20,14 +20,16 @@ namespace Hsp.Moscow.MidiHandler
 
     private static MsgrClient Client { get; set; }
 
+
     static void Main(string[] args)
     {
       CanExit = false;
 
-      var name = Guid.NewGuid().ToString();
+      var clientName = args.Length > 0 ? args[0] : Guid.NewGuid().ToString();
+
       var recipient = "Moscow";
 
-      Client = new MsgrClient(name);
+      Client = new MsgrClient(clientName);
       Client.Connect();
       Client.Send(recipient, "Ready");
 
