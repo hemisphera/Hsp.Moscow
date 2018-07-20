@@ -27,6 +27,11 @@ namespace Hsp.Moscow.Extensibility
     }
 
 
+    public T GetArg<T>(int index)
+    {
+      return (T) Args[index];
+    }
+
     public override string ToString()
     {
       var argsStr = String.Join(",", Args);
